@@ -25,13 +25,13 @@ def genIMUBagFile(logdata):
 	imu1_gyry = imu1["GyrY"].listData
 	imu1_gyrz = imu1["GyrZ"].listData
 
-	topic = '/imu'
+	topic = logdata.vehicleType+'/imu'
 
 	with rosbag.Bag('output.bag', 'w') as outbag:
 		for msgid in range(0,len(imu1_timems)):
 			imuMsg = Imu()
 			imuMsg.header.seq = imu1_timems[msgid][0]
-			imuMsg.header.stamp =  rospy.Time.from_sec(float(long(imu1_timems[msgid][1])/10e6)) # TODO: check if conversion is correct 
+			imuMsg.header.stamp =  rospy.Time.from_sec(float(long(imu1_timems[msgid][1])/1e6)) # TODO: check if conversion is correct 
 			imuMsg.angular_velocity.x = imu1_gyrx[msgid][1]
 			imuMsg.angular_velocity.y = imu1_gyry[msgid][1]
 			imuMsg.angular_velocity.z = imu1_gyrz[msgid][1]

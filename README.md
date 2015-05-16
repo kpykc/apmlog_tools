@@ -28,3 +28,8 @@ If you want say update class from `ardupilot` source:
 ~~~{.bash}
 	rosrun apmlog_tools log2bag.py src/sandbox/apmlog_tools/sample/2.bin
 ~~~
+
+# misc
+
+	git archive -o apmlog_tools-latest.zip HEAD
+
