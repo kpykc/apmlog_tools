@@ -14,12 +14,6 @@ try:
 except ImportError:
 	print "Can't load ROS dependencies"
 
-from apmlog_tools.msg import AHR2
-
-#AHR2Msg = AHR2()
-
-
-
 try:
 	from imuHandler import IMUHandler
 	from ahrHandler import AHRHandler
@@ -64,12 +58,23 @@ def main():
 	bag = rosbag.Bag('test.bag', 'w')
 
 	# load all handlers and call them
-	hndl = IMUHandler()
 
-	hndl.setName("IMU")
-	hndl.convertData(logdata, bag)
-	hndl.setName("IMU2")
-	hndl.convertData(logdata, bag)
+	# IMU
+	print("IMU...")
+	imu_h = IMUHandler()
+
+	imu_h.setName("IMU")
+	imu_h.convertData(logdata, bag)
+
+	imu_h.setName("IMU2")
+	imu_h.convertData(logdata, bag)
+
+	# AHR
+	print("AHR...")
+	ahr_h = AHRHandler()
+
+	ahr_h.setName("AHR2")
+	ahr_h.convertData(logdata, bag)
 
 	# camera
 	if args.video != None:
