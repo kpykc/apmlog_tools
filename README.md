@@ -42,6 +42,8 @@ optional arguments:
   -e, --empty     run an initial check for an empty log
 ~~~
 
+Converting video to ROSBag file:
+
 ~~~{.bash}
 	rosrun apmlog_tools  video2bag.py video_and_telemetry/DCIM/100HDDVR/REC_0001.MOV
 
