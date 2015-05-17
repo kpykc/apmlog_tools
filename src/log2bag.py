@@ -29,6 +29,7 @@ def genIMUBagFile(logdata):
 
 	with rosbag.Bag('output.bag', 'w') as outbag:
 		for msgid in range(0,len(imu1_timems)):
+
 			imuMsg = Imu()
 			imuMsg.header.seq = imu1_timems[msgid][0]
 			imuMsg.header.stamp =  rospy.Time.from_sec(float(long(imu1_timems[msgid][1])/1e6)) # TODO: check if conversion is correct 
@@ -38,6 +39,8 @@ def genIMUBagFile(logdata):
 			imuMsg.linear_acceleration.x = imu1_accx[msgid][1]
 			imuMsg.linear_acceleration.y = imu1_accy[msgid][1]
 			imuMsg.linear_acceleration.z = imu1_accz[msgid][1]
+			# TODO: This is not enough for ROS IMU msg, add cov matrices and calculate orientation
+
 			outbag.write(topic, imuMsg, imuMsg.header.stamp)
 
 
