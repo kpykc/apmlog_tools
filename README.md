@@ -26,21 +26,21 @@ If you want say update class from `ardupilot` source:
 	topics:      /imu   34756 msgs    : sensor_msgs/Imu
 ~~~
 
+Usage: `log2bag.py [-h] [-f] [-s] [-p] [-e] logfile`:
 
-Usage: `log2bag.py [-h] [-f] [-s] [-p] [-e] logfile`
-
-Convert APM Dataflash log to ROSBag format
-
+~~~
 positional arguments:
+
   logfile         path to Dataflash log file (or - for stdin)
 
 optional arguments:
+
   -h, --help      show this help message and exit
   -f , --format   log file format: 'bin','log' or 'auto'
   -s, --skip_bad  skip over corrupt dataflash lines
   -p, --profile   output performance profiling data
   -e, --empty     run an initial check for an empty log
-
+~~~
 
 ~~~{.bash}
 	rosrun apmlog_tools  video2bag.py video_and_telemetry/DCIM/100HDDVR/REC_0001.MOV
