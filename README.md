@@ -11,7 +11,7 @@ If you want say update class from `ardupilot` source:
 
 ~~~{.bash}
 	rosrun apmlog_tools log2bag.py src/sandbox/apmlog_tools/sample/2.bin
-	
+
 	0/LogAnalyzer> python log2bag.py 
 	0/LogAnalyzer> rosbag info output.bag 
 	path:        output.bag
@@ -62,5 +62,3 @@ optional arguments:
 
 	git archive -o apmlog_tools-latest.zip HEAD
 
-
-#/Users/kp/Downloads/pixhack/video_and_telemetry/DCIM/100HDDV
