@@ -10,7 +10,7 @@ import DataflashLog
 # add ros stuff
 import rospy
 import rosbag
-from sensor_msgs.msg import Imu
+
 from apmlog_tools.msg import AHR2
 
 #AHR2Msg = AHR2()
@@ -50,10 +50,21 @@ from apmlog_tools.msg import AHR2
 #                 test.execTime = 1000 * (endTime-startTime)
 
 class IMUHandler:
+	'''registers test classes, loading using a basic plugin architecture, and can run them all in one run() operation'''
+	def __init__(self):
+		try:
+			from sensor_msgs.msg import Imu
+		except ImportError:
+			self.Imu = None
+		else:
+			self.Imu = Imu
+		
+	def setName(self, name):
+		self.name = name
 
-	def genIMUBagFile(self, logdata, imu_name, bagfile):
+	def genIMUBagFile(self, logdata, bagfile):
 
-		imu1 = logdata.channels[imu_name]
+		imu1 = logdata.channels[self.name]
 		imu1_timems = imu1["TimeMS"].listData
 		imu1_accx = imu1["AccX"].listData
 		imu1_accy = imu1["AccY"].listData
@@ -63,11 +74,11 @@ class IMUHandler:
 		imu1_gyry = imu1["GyrY"].listData
 		imu1_gyrz = imu1["GyrZ"].listData
 
-		topic = logdata.vehicleType+'/'+imu_name
+		topic = logdata.vehicleType+'/'+self.name
 
 		for msgid in range(0,len(imu1_timems)):
 
-			imuMsg = Imu()
+			imuMsg = self.Imu()
 			imuMsg.header.seq = imu1_timems[msgid][0]
 			imuMsg.header.stamp =  rospy.Time.from_sec(float(long(imu1_timems[msgid][1])/1e6)) # TODO: check if conversion is correct 
 			imuMsg.angular_velocity.x = imu1_gyrx[msgid][1]
@@ -112,10 +123,11 @@ def main():
 	bag = rosbag.Bag('test.bag', 'w')
 
 	hndl = IMUHandler()
-	imu_name = "IMU"
-	hndl.genIMUBagFile(logdata, imu_name, bag)
-	imu_name = "IMU2"
-	hndl.genIMUBagFile(logdata, imu_name, bag)
+	
+	hndl.setName("IMU")
+	hndl.genIMUBagFile(logdata, bag)
+	hndl.setName("IMU2")
+	hndl.genIMUBagFile(logdata, bag)
 
 	bag.close()
 
