@@ -52,10 +52,14 @@ from apmlog_tools.msg import AHR2
 #                 endTime = time.time()
 #                 test.execTime = 1000 * (endTime-startTime)
 
-from imuHandler import IMUHandler
-from ahrHandler import AHRHandler
-# from handlers.imuHandler import IMUHandler
-# from handlers.ahrHandler import AHRHandler
+try:
+	from imuHandler import IMUHandler
+	from ahrHandler import AHRHandler
+	from videoHandler import videoFileHandler
+	# from handlers.imuHandler import IMUHandler
+	# from handlers.ahrHandler import AHRHandler
+except ImportError:
+	print "Can't load handlers"
 
 def main():
 
@@ -96,6 +100,14 @@ def main():
 	hndl.convertData(logdata, bag)
 	hndl.setName("IMU2")
 	hndl.convertData(logdata, bag)
+
+	# camera
+	# cam = videoFileHandler()
+	# cam.setName('camera')
+	# cam.setSource(args.logfile.name)
+	# cam.setVerbose(False)
+	# print("Converting...")
+	# cam.convertData(bag)
 
 	# handlers finished
 	bag.close()

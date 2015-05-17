@@ -1,32 +1,15 @@
-#!/usr/bin/env python
-
-import os, sys
-import argparse
-import time
-
-import numpy as np
-import cv2
-
-
-# add ros stuff
-import rospy
-import rosbag
-from sensor_msgs.msg import Image
-from cv_bridge import CvBridge, CvBridgeError
-
-
-topic = 'camera/image_raw'
-
 try:
+	import numpy as np
+	import cv2
 	import rospy
 	import rosbag
-	from apmlog_tools.msg import AHR2
+	from sensor_msgs.msg import Image
+	from cv_bridge import CvBridge, CvBridgeError
 except ImportError:
 	print "Can't load ROS dependencies"
 
-
-class CameraHandler:
-	'''Handle camera data'''
+class videoFileHandler:
+	'''Handle video file data'''
 	def __init__(self):
 		name = 'none'
 		self.showFrames = False
@@ -84,27 +67,3 @@ class CameraHandler:
 		self.capture.release()
 		cv2.destroyAllWindows()
 
-def main():
-
-	parser = argparse.ArgumentParser(description='Convert APM Dataflash log to ROSBag format')
-	parser.add_argument('logfile', type=argparse.FileType('r'), help='path to Dataflash log file (or - for stdin)')
-	parser.add_argument('-t', '--time_sync', metavar='', action='store_const', const=True, help='sync video to logfile') # TODO: add sync time code
-	args = parser.parse_args()
-
-	# starting conversion
-	bag = rosbag.Bag('output_video.bag', 'w')
-
-	cam = CameraHandler()
-	cam.setName('camera')
-	cam.setSource(args.logfile.name)
-	cam.setVerbose(False)
-	print("Converting...")
-	cam.convertData(bag)
-
-	# handlers finished
-	bag.close()
-	print("Convesion finished.")
-
-
-if __name__ == "__main__":
-    main()

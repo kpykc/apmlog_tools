@@ -39,7 +39,7 @@ class AHRHandler:
 			imuMsg.linear_acceleration.x = imu1_accx[msgid][1]
 			imuMsg.linear_acceleration.y = imu1_accy[msgid][1]
 			imuMsg.linear_acceleration.z = imu1_accz[msgid][1]
-			Header header
+			# Header header
 			# float32 Lat # [deg]?
 			# float32 Lng
 			# float32 Pitch
