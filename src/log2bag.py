@@ -17,6 +17,7 @@ except ImportError:
 try:
 	from imuHandler import IMUHandler
 	from ahrHandler import AHRHandler
+	from attHandler import ATTHandler
 	from videoHandler import videoFileHandler
 	# from handlers.imuHandler import IMUHandler
 	# from handlers.ahrHandler import AHRHandler
@@ -75,6 +76,13 @@ def main():
 
 	ahr_h.setName("AHR2")
 	ahr_h.convertData(logdata, bag)
+
+	# ATT
+	print("ATT...")
+	att_h = ATTHandler()
+
+	att_h.setName("ATT")
+	att_h.convertData(logdata, bag)
 
 	# camera
 	if args.video != None:
