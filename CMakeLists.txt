@@ -51,7 +51,7 @@ find_package(catkin REQUIRED COMPONENTS
 # Generate messages in the 'msg' folder
  add_message_files(
    FILES
-   AHR2.msg
+   AHR.msg
 #   Message2.msg
  )
 
