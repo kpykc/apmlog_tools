@@ -17,7 +17,7 @@ from cv_bridge import CvBridge, CvBridgeError
 
 topic = 'camera/image_raw'
 
-def genVideoBag(capture):
+def convert(capture):
 	with rosbag.Bag('output_video.bag', 'w') as outbag:
 		seq = 0
 		bridge = CvBridge()
@@ -64,7 +64,7 @@ def main():
 	cap = cv2.VideoCapture(args.logfile.name)
 
 	if cap.isOpened() == True:
-		genVideoBag(cap)
+		convert(cap)
 
 	# When everything done, release the capture
 	cap.release()

@@ -138,7 +138,14 @@ include_directories(
 ## in contrast to setup.py, you can choose the destination
 install(PROGRAMS
   src/log2bag.py
+  src/video2bag.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(PROGRAMS
+  src/handlers/imuHandler.py
+  src/handlers/ahrHandler.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/handlers/
 )
 
 ## Mark executables and/or libraries for installation
