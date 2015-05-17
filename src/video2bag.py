@@ -24,17 +24,27 @@ def genVideoBag(capture):
 		while(True):
 			# Capture frame-by-frame
 			ret, cvImage = capture.read()
-			imageMsg = bridge.cv2_to_imgmsg(cvImage, "bgr8") # TODO: format spec as cmd option?
+			try:
+				imageMsg = bridge.cv2_to_imgmsg(cvImage, "bgr8") # TODO: format spec as cmd option?
+			except CvBridgeError, e:
+				print e
 
+			# creating ros message
+			seq = seq + 1
+
+			imageMsg.header.seq = seq
+			# TODO: temporary hack, time sync/source is needed
+			imageMsg.header.stamp =  rospy.Time.from_sec(time.time()) 
+
+			# write message to bag file
+			outbag.write(topic, imageMsg, imageMsg.header.stamp)
+
+			# this is not so important for conversion
 			cv2.imshow('frame', cvImage)
 			if cv2.waitKey(1) & 0xFF == ord('q'):
 				break
-			seq = seq + 1
-			# imuMsg = Imu()
-			imageMsg.header.seq = seq
-			imageMsg.header.stamp =  rospy.Time.from_sec(time.time()) # TODO: temporary hack
 
-			outbag.write(topic, imageMsg, imageMsg.header.stamp)
+
 
 	# Our operations on the frame come here
 	# gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)

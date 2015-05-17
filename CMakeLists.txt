@@ -4,7 +4,8 @@ project(apmlog_tools)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS rospy roscpp sensor_msgs geometry_msgs nav_msgs std_msgs
+find_package(catkin REQUIRED COMPONENTS 
+	rospy roscpp sensor_msgs geometry_msgs nav_msgs std_msgs message_generation
 )
 #find_package(catkin REQUIRED dynamic_reconfigure)
 
@@ -47,12 +48,12 @@ find_package(catkin REQUIRED COMPONENTS rospy roscpp sensor_msgs geometry_msgs n
 #   cfg/cv_gui.cfg
 # )
 
-## Generate messages in the 'msg' folder
-#  add_message_files(
-#    FILES
-#    adc.msg
-# #   Message2.msg
-#  )
+# Generate messages in the 'msg' folder
+ add_message_files(
+   FILES
+   AHR2.msg
+#   Message2.msg
+ )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -69,10 +70,10 @@ find_package(catkin REQUIRED COMPONENTS rospy roscpp sensor_msgs geometry_msgs n
 # )
 
 ## Generate added messages and services with any dependencies listed here
- # generate_messages(
- #   DEPENDENCIES
- #   std_msgs
- # )
+ generate_messages(
+   DEPENDENCIES
+   std_msgs
+ )
 
 ###################################
 ## catkin specific configuration ##
@@ -86,7 +87,7 @@ find_package(catkin REQUIRED COMPONENTS rospy roscpp sensor_msgs geometry_msgs n
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES robovero_ros
-  CATKIN_DEPENDS std_msgs sensor_msgs geometry_msgs nav_msgs rospy
+  CATKIN_DEPENDS std_msgs sensor_msgs geometry_msgs nav_msgs rospy message_runtime 
   DEPENDS system_lib
 )
 

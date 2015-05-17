@@ -11,37 +11,76 @@ import DataflashLog
 import rospy
 import rosbag
 from sensor_msgs.msg import Imu
+from apmlog_tools.msg import AHR2
 
+#AHR2Msg = AHR2()
 
-def genIMUBagFile(logdata):
+# class TestSuite(object):
+#     '''registers test classes, loading using a basic plugin architecture, and can run them all in one run() operation'''
+#     def __init__(self):
+#         self.tests   = []
+#         self.logfile = None
+#         self.logdata = None  
+#         # dynamically load in Test subclasses from the 'tests' folder
+#         # to prevent one being loaded, move it out of that folder, or set that test's .enable attribute to False
+#         dirName = os.path.dirname(os.path.abspath(__file__))
+#         testScripts = glob.glob(dirName + '/tests/*.py')
+#         testClasses = []
+#         for script in testScripts:
+#             m = imp.load_source("m",script)
+#             for name, obj in inspect.getmembers(m, inspect.isclass):
+#                 if name not in testClasses and inspect.getsourcefile(obj) == script:
+#                     testClasses.append(name)
+#                     self.tests.append(obj())
 
-	imu1 = logdata.channels["IMU"]
-	imu1_timems = imu1["TimeMS"].listData
-	imu1_accx = imu1["AccX"].listData
-	imu1_accy = imu1["AccY"].listData
-	imu1_accz = imu1["AccZ"].listData
+#         # and here's an example of explicitly loading a Test class if you wanted to do that
+#         # m = imp.load_source("m", dirName + '/tests/TestBadParams.py')
+#         # self.tests.append(m.TestBadParams())
 
-	imu1_gyrx = imu1["GyrX"].listData
-	imu1_gyry = imu1["GyrY"].listData
-	imu1_gyrz = imu1["GyrZ"].listData
+#     def run(self, logdata, verbose):
+#         '''run all registered tests in a single call, gathering execution timing info'''
+#         self.logdata = logdata
+#         self.logfile = logdata.filename
+#         for test in self.tests:
+#             # run each test in turn, gathering timing info
+#             if test.enable:
+#                 startTime = time.time()
+#                 test.run(self.logdata, verbose)  # RUN THE TEST
+#                 endTime = time.time()
+#                 test.execTime = 1000 * (endTime-startTime)
 
-	topic = logdata.vehicleType+'/imu'
+class IMUHandler:
 
-	with rosbag.Bag('output.bag', 'w') as outbag:
-		for msgid in range(0,len(imu1_timems)):
+	def genIMUBagFile(self, logdata, imu_name):
 
-			imuMsg = Imu()
-			imuMsg.header.seq = imu1_timems[msgid][0]
-			imuMsg.header.stamp =  rospy.Time.from_sec(float(long(imu1_timems[msgid][1])/1e6)) # TODO: check if conversion is correct 
-			imuMsg.angular_velocity.x = imu1_gyrx[msgid][1]
-			imuMsg.angular_velocity.y = imu1_gyry[msgid][1]
-			imuMsg.angular_velocity.z = imu1_gyrz[msgid][1]
-			imuMsg.linear_acceleration.x = imu1_accx[msgid][1]
-			imuMsg.linear_acceleration.y = imu1_accy[msgid][1]
-			imuMsg.linear_acceleration.z = imu1_accz[msgid][1]
-			# TODO: This is not enough for ROS IMU msg, add cov matrices and calculate orientation
+		imu1 = logdata.channels[imu_name]
+		imu1_timems = imu1["TimeMS"].listData
+		imu1_accx = imu1["AccX"].listData
+		imu1_accy = imu1["AccY"].listData
+		imu1_accz = imu1["AccZ"].listData
 
-			outbag.write(topic, imuMsg, imuMsg.header.stamp)
+		imu1_gyrx = imu1["GyrX"].listData
+		imu1_gyry = imu1["GyrY"].listData
+		imu1_gyrz = imu1["GyrZ"].listData
+
+		topic = logdata.vehicleType+'/'+imu_name
+
+		with rosbag.Bag(imu_name+'.bag', 'w') as outbag:
+			for msgid in range(0,len(imu1_timems)):
+
+				imuMsg = Imu()
+				imuMsg.header.seq = imu1_timems[msgid][0]
+				imuMsg.header.stamp =  rospy.Time.from_sec(float(long(imu1_timems[msgid][1])/1e6)) # TODO: check if conversion is correct 
+				imuMsg.angular_velocity.x = imu1_gyrx[msgid][1]
+				imuMsg.angular_velocity.y = imu1_gyry[msgid][1]
+				imuMsg.angular_velocity.z = imu1_gyrz[msgid][1]
+				imuMsg.linear_acceleration.x = imu1_accx[msgid][1]
+				imuMsg.linear_acceleration.y = imu1_accy[msgid][1]
+				imuMsg.linear_acceleration.z = imu1_accz[msgid][1]
+				# TODO: This is not enough for ROS IMU msg, add cov matrices and calculate orientation
+
+				outbag.write(topic, imuMsg, imuMsg.header.stamp)
+
 
 
 def main():
@@ -71,7 +110,11 @@ def main():
 			sys.exit(1)
 
 
-	genIMUBagFile(logdata)
+	hndl = IMUHandler()
+	imu_name = "IMU"
+	hndl.genIMUBagFile(logdata, imu_name)
+	imu_name = "IMU2"
+	hndl.genIMUBagFile(logdata, imu_name)
 
 
 if __name__ == "__main__":
