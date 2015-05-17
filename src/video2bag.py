@@ -36,7 +36,11 @@ class CameraHandler:
 
 	def setName(self, name):
 		self.name = name
-		self.capture = cv2.VideoCapture(self.name)
+		self.topic = self.name+'/image_raw'
+
+	def setSource(self, srcname):
+		self.srcname = srcname
+		self.capture = cv2.VideoCapture(self.srcname)
 
 		if self.capture.isOpened() == True:
 			print("Input file is opened. Ready to perform convertion.")
@@ -62,7 +66,7 @@ class CameraHandler:
 			imageMsg.header.stamp =  rospy.Time.from_sec(time.time()) 
 
 			# write message to bag file
-			bagfile.write(topic, imageMsg, imageMsg.header.stamp)
+			bagfile.write(self.topic, imageMsg, imageMsg.header.stamp)
 
 			# this is not so important for conversion
 			if self.showFrames == True:
@@ -87,14 +91,13 @@ def main():
 	parser.add_argument('-s', '--sync_time', metavar='', action='store_const', const=True, help='sync video to logfile') # TODO: add sync time code
 	args = parser.parse_args()
 
-	
-
 	cam = CameraHandler()
 
 	# starting conversion
 	bag = rosbag.Bag('output_video.bag', 'w')
 
-	cam.setName(args.logfile.name)
+	cam.setName('camera')
+	cam.setSource(args.logfile.name)
 	cam.setVerbose(False)
 	print("Converting...")
 	cam.convertData(bag)
