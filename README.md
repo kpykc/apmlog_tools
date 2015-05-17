@@ -29,6 +29,21 @@ If you want say update class from `ardupilot` source:
 	rosrun apmlog_tools log2bag.py src/sandbox/apmlog_tools/sample/2.bin
 ~~~
 
+
+Usage: `log2bag.py [-h] [-f] [-s] [-p] [-e] logfile`
+
+Convert APM Dataflash log to ROSBag format
+
+positional arguments:
+  logfile         path to Dataflash log file (or - for stdin)
+
+optional arguments:
+  -h, --help      show this help message and exit
+  -f , --format   log file format: 'bin','log' or 'auto'
+  -s, --skip_bad  skip over corrupt dataflash lines
+  -p, --profile   output performance profiling data
+  -e, --empty     run an initial check for an empty log
+
 # misc
 
 	git archive -o apmlog_tools-latest.zip HEAD
