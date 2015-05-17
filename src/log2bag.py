@@ -51,7 +51,7 @@ from apmlog_tools.msg import AHR2
 
 class IMUHandler:
 
-	def genIMUBagFile(self, logdata, imu_name):
+	def genIMUBagFile(self, logdata, imu_name, bagfile):
 
 		imu1 = logdata.channels[imu_name]
 		imu1_timems = imu1["TimeMS"].listData
@@ -65,21 +65,20 @@ class IMUHandler:
 
 		topic = logdata.vehicleType+'/'+imu_name
 
-		with rosbag.Bag(imu_name+'.bag', 'w') as outbag:
-			for msgid in range(0,len(imu1_timems)):
+		for msgid in range(0,len(imu1_timems)):
 
-				imuMsg = Imu()
-				imuMsg.header.seq = imu1_timems[msgid][0]
-				imuMsg.header.stamp =  rospy.Time.from_sec(float(long(imu1_timems[msgid][1])/1e6)) # TODO: check if conversion is correct 
-				imuMsg.angular_velocity.x = imu1_gyrx[msgid][1]
-				imuMsg.angular_velocity.y = imu1_gyry[msgid][1]
-				imuMsg.angular_velocity.z = imu1_gyrz[msgid][1]
-				imuMsg.linear_acceleration.x = imu1_accx[msgid][1]
-				imuMsg.linear_acceleration.y = imu1_accy[msgid][1]
-				imuMsg.linear_acceleration.z = imu1_accz[msgid][1]
-				# TODO: This is not enough for ROS IMU msg, add cov matrices and calculate orientation
+			imuMsg = Imu()
+			imuMsg.header.seq = imu1_timems[msgid][0]
+			imuMsg.header.stamp =  rospy.Time.from_sec(float(long(imu1_timems[msgid][1])/1e6)) # TODO: check if conversion is correct 
+			imuMsg.angular_velocity.x = imu1_gyrx[msgid][1]
+			imuMsg.angular_velocity.y = imu1_gyry[msgid][1]
+			imuMsg.angular_velocity.z = imu1_gyrz[msgid][1]
+			imuMsg.linear_acceleration.x = imu1_accx[msgid][1]
+			imuMsg.linear_acceleration.y = imu1_accy[msgid][1]
+			imuMsg.linear_acceleration.z = imu1_accz[msgid][1]
+			# TODO: This is not enough for ROS IMU msg, add cov matrices and calculate orientation
 
-				outbag.write(topic, imuMsg, imuMsg.header.stamp)
+			bagfile.write(topic, imuMsg, imuMsg.header.stamp)
 
 
 
@@ -99,6 +98,7 @@ def main():
 	logdata.read(args.logfile.name, format=args.format, ignoreBadlines=args.skip_bad)
 	endTime = time.time()
 
+
 	if args.profile:
 		print "Log file read time: %.2f seconds" % (endTime-startTime)
 
@@ -109,12 +109,15 @@ def main():
 			sys.stderr.write("Empty log file: %s, %s" % (logdata.filename, emptyErr))
 			sys.exit(1)
 
+	bag = rosbag.Bag('test.bag', 'w')
 
 	hndl = IMUHandler()
 	imu_name = "IMU"
-	hndl.genIMUBagFile(logdata, imu_name)
+	hndl.genIMUBagFile(logdata, imu_name, bag)
 	imu_name = "IMU2"
-	hndl.genIMUBagFile(logdata, imu_name)
+	hndl.genIMUBagFile(logdata, imu_name, bag)
+
+	bag.close()
 
 
 if __name__ == "__main__":
