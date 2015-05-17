@@ -60,7 +60,47 @@ Converting video to ROSBag file:
 	topics:      camera/image_raw   350 msgs    : sensor_msgs/Image
 ~~~~
 
+~~~
+rosrun apmlog_tools log2bag.py sample/2.bin -v ~/Downloads/pixhack/video_and_telemetry/DCIM/100HDDVR/REC_0001.MOV
+~~~
+
 # misc
 
 	git archive -o apmlog_tools-latest.zip HEAD
 
+
+Just note:
+
+	# class TestSuite(object):
+	#     '''registers test classes, loading using a basic plugin architecture, and can run them all in one run() operation'''
+	#     def __init__(self):
+	#         self.tests   = []
+	#         self.logfile = None
+	#         self.logdata = None  
+	#         # dynamically load in Test subclasses from the 'tests' folder
+	#         # to prevent one being loaded, move it out of that folder, or set that test's .enable attribute to False
+	#         dirName = os.path.dirname(os.path.abspath(__file__))
+	#         testScripts = glob.glob(dirName + '/tests/*.py')
+	#         testClasses = []
+	#         for script in testScripts:
+	#             m = imp.load_source("m",script)
+	#             for name, obj in inspect.getmembers(m, inspect.isclass):
+	#                 if name not in testClasses and inspect.getsourcefile(obj) == script:
+	#                     testClasses.append(name)
+	#                     self.tests.append(obj())
+
+	#         # and here's an example of explicitly loading a Test class if you wanted to do that
+	#         # m = imp.load_source("m", dirName + '/tests/TestBadParams.py')
+	#         # self.tests.append(m.TestBadParams())
+
+	#     def run(self, logdata, verbose):
+	#         '''run all registered tests in a single call, gathering execution timing info'''
+	#         self.logdata = logdata
+	#         self.logfile = logdata.filename
+	#         for test in self.tests:
+	#             # run each test in turn, gathering timing info
+	#             if test.enable:
+	#                 startTime = time.time()
+	#                 test.run(self.logdata, verbose)  # RUN THE TEST
+	#                 endTime = time.time()
+	#                 test.execTime = 1000 * (endTime-startTime)

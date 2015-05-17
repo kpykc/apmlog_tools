@@ -18,39 +18,7 @@ from apmlog_tools.msg import AHR2
 
 #AHR2Msg = AHR2()
 
-# class TestSuite(object):
-#     '''registers test classes, loading using a basic plugin architecture, and can run them all in one run() operation'''
-#     def __init__(self):
-#         self.tests   = []
-#         self.logfile = None
-#         self.logdata = None  
-#         # dynamically load in Test subclasses from the 'tests' folder
-#         # to prevent one being loaded, move it out of that folder, or set that test's .enable attribute to False
-#         dirName = os.path.dirname(os.path.abspath(__file__))
-#         testScripts = glob.glob(dirName + '/tests/*.py')
-#         testClasses = []
-#         for script in testScripts:
-#             m = imp.load_source("m",script)
-#             for name, obj in inspect.getmembers(m, inspect.isclass):
-#                 if name not in testClasses and inspect.getsourcefile(obj) == script:
-#                     testClasses.append(name)
-#                     self.tests.append(obj())
 
-#         # and here's an example of explicitly loading a Test class if you wanted to do that
-#         # m = imp.load_source("m", dirName + '/tests/TestBadParams.py')
-#         # self.tests.append(m.TestBadParams())
-
-#     def run(self, logdata, verbose):
-#         '''run all registered tests in a single call, gathering execution timing info'''
-#         self.logdata = logdata
-#         self.logfile = logdata.filename
-#         for test in self.tests:
-#             # run each test in turn, gathering timing info
-#             if test.enable:
-#                 startTime = time.time()
-#                 test.run(self.logdata, verbose)  # RUN THE TEST
-#                 endTime = time.time()
-#                 test.execTime = 1000 * (endTime-startTime)
 
 try:
 	from imuHandler import IMUHandler
@@ -65,6 +33,8 @@ def main():
 
 	parser = argparse.ArgumentParser(description='Convert APM Dataflash log to ROSBag format')
 	parser.add_argument('logfile', type=argparse.FileType('r'), help='path to Dataflash log file (or - for stdin)')
+	parser.add_argument('-v','--video', type=argparse.FileType('r'), help='path to video file (or - for stdin)')
+	parser.add_argument('-t', '--time_sync', metavar='', action='store_const', const=True, help='sync video to logfile') # TODO: add sync time code
 	parser.add_argument('-f', '--format',  metavar='', type=str, action='store', choices=['bin','log','auto'], default='auto', help='log file format: \'bin\',\'log\' or \'auto\'')
 	parser.add_argument('-s', '--skip_bad', metavar='', action='store_const', const=True, help='skip over corrupt dataflash lines')
 	parser.add_argument('-p', '--profile', metavar='', action='store_const', const=True, help='output performance profiling data')
@@ -102,12 +72,14 @@ def main():
 	hndl.convertData(logdata, bag)
 
 	# camera
-	# cam = videoFileHandler()
-	# cam.setName('camera')
-	# cam.setSource(args.logfile.name)
-	# cam.setVerbose(False)
-	# print("Converting...")
-	# cam.convertData(bag)
+	if args.video != None:
+		print("Converting video...")
+		cam = videoFileHandler()
+		cam.setName('camera')
+		cam.setSource(args.video.name)
+		cam.setVerbose(False)
+		print("Converting...")
+		cam.convertData(bag)
 
 	# handlers finished
 	bag.close()
