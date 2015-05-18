@@ -7,7 +7,46 @@ If you want say update class from `ardupilot` source:
 
 	wget https://raw.githubusercontent.com/diydrones/ardupilot/master/Tools/LogAnalyzer/DataflashLog.py
 
-# running in ros
+
+# Notes on installation
+
+**Deps**: `python`, `opencv` python wrappers, `numpy`, `rospy`, `cvbridge`, `rosbag`, etc.
+
+~~~{.xml}
+	<build_depend>sensor_msgs</build_depend>
+	<build_depend>geometry_msgs</build_depend>
+	<build_depend>nav_msgs</build_depend>
+	<build_depend>std_msgs</build_depend>
+	<build_depend>rospy</build_depend>
+	<build_depend>message_generation</build_depend>
+	<run_depend>rospy</run_depend>
+	<run_depend>sensor_msgs</run_depend>
+	<run_depend>geometry_msgs</run_depend>
+	<run_depend>nav_msgs</run_depend>
+	<run_depend>std_msgs</run_depend>
+	<run_depend>message_runtime</run_depend>
+~~~
+
+# Running in ROS environment
+
+**Important**: do not forget to `source /opt/ros/setup.bash` (path depends on your install), and `source devel/setup.bash` in your catkin workspace. 
+
+
+Usage: `log2bag.py [-h] [-f] [-s] [-p] [-e] logfile`:
+
+~~~
+positional arguments:
+
+  logfile         path to Dataflash log file (or - for stdin)
+
+optional arguments:
+
+  -h, --help      show this help message and exit
+  -f , --format   log file format: 'bin','log' or 'auto'
+  -s, --skip_bad  skip over corrupt dataflash lines
+  -p, --profile   output performance profiling data
+  -e, --empty     run an initial check for an empty log
+~~~
 
 ~~~{.bash}
 	rosrun apmlog_tools log2bag.py src/sandbox/apmlog_tools/sample/2.bin
@@ -26,21 +65,6 @@ If you want say update class from `ardupilot` source:
 	topics:      /imu   34756 msgs    : sensor_msgs/Imu
 ~~~
 
-Usage: `log2bag.py [-h] [-f] [-s] [-p] [-e] logfile`:
-
-~~~
-positional arguments:
-
-  logfile         path to Dataflash log file (or - for stdin)
-
-optional arguments:
-
-  -h, --help      show this help message and exit
-  -f , --format   log file format: 'bin','log' or 'auto'
-  -s, --skip_bad  skip over corrupt dataflash lines
-  -p, --profile   output performance profiling data
-  -e, --empty     run an initial check for an empty log
-~~~
 
 Converting video to ROSBag file:
 
@@ -65,6 +89,9 @@ rosrun apmlog_tools log2bag.py sample/2.bin -v ~/Downloads/pixhack/video_and_tel
 ~~~
 
 # misc
+
+**TODO**:  Note that types in the streams `*.msg` are chosen by voluntaristic decision. They may be wrong.
+
 
 	git archive -o apmlog_tools-latest.zip HEAD
 
