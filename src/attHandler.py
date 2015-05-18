@@ -20,13 +20,6 @@ class ATTHandler:
 
 		att = logdata.channels[self.name]
 		timestamp_ms = att["TimeMS"].listData
-		# att_DesRoll = att["DesRoll"].listData
-		# att_DesYaw = att["DesYaw"].listData
-		# att_ErrRP = att["ErrRP"].listData
-		# att_ErrYaw = att["ErrYaw"].listData
-		# att_pitch = att["Pitch"].listData
-		# att_roll = att["Roll"].listData
-		# att_yaw = att["Yaw"].listData
 		
 		# TODO: there are iterators, use them?
 		for msgid in range(0,len(timestamp_ms)):
