@@ -19,6 +19,7 @@ try:
 	from ahrHandler import AHRHandler
 	from attHandler import ATTHandler
 	from magHandler import MAGHandler
+	from baroHandler import BAROHandler
 	from videoHandler import videoFileHandler
 	# from handlers.imuHandler import IMUHandler
 	# from handlers.ahrHandler import AHRHandler
@@ -85,7 +86,7 @@ def main():
 	att_h.setName("ATT")
 	att_h.convertData(logdata, bag)
 
-	# ATT
+	# MAG
 	print("MAG...")
 	mag_h = MAGHandler()
 
@@ -94,6 +95,13 @@ def main():
 
 	mag_h.setName("MAG2")
 	mag_h.convertData(logdata, bag)
+
+	# BARO
+	print("BARO...")
+	baro_h = BAROHandler()
+
+	baro_h.setName("BARO")
+	baro_h.convertData(logdata, bag)
 
 	# camera
 	if args.video != None:

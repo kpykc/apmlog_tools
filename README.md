@@ -51,18 +51,35 @@ optional arguments:
 ~~~{.bash}
 	rosrun apmlog_tools log2bag.py src/sandbox/apmlog_tools/sample/2.bin
 
-	0/LogAnalyzer> python log2bag.py 
-	0/LogAnalyzer> rosbag info output.bag 
-	path:        output.bag
+	Loading log file...
+	Converting...
+	IMU...
+	AHR...
+	ATT...
+	MAG...
+	BARO...
+	Convesion finished.
+	0/apmlog_tools> rosbag info test.bag 
+	path:        test.bag
 	version:     2.0
-	duration:    0.1s
-	start:       Jan 01 1970 01:00:00.01 (0.01)
-	end:         Jan 01 1970 01:00:00.08 (0.08)
-	size:        12.3 MB
-	messages:    34756
-	compression: none [16/16 chunks]
-	types:       sensor_msgs/Imu [6a62c6daae103f4ff57a132d6f95cec2]
-	topics:      /imu   34756 msgs    : sensor_msgs/Imu
+	duration:    0.7s
+	start:       Jan 01 1970 01:00:00.07 (0.07)
+	end:         Jan 01 1970 01:00:00.82 (0.82)
+	size:        34.6 MB
+	messages:    173785
+	compression: none [44/44 chunks]
+	types:       apmlog_tools/AHR  [9d012171d83de74acfa0a894540f0986]
+	             apmlog_tools/ATT  [f4f099f3e1046a4bcb57cb9d663574ae]
+	             apmlog_tools/BARO [297cf70f0c733e3d5f4861d33d57bc18]
+	             apmlog_tools/MAG  [103fdaa79527522ab1187d8e39f937bd]
+	             sensor_msgs/Imu   [6a62c6daae103f4ff57a132d6f95cec2]
+	topics:      ArduCopter/AHR2   41707 msgs    : apmlog_tools/AHR 
+	             ArduCopter/ATT    41709 msgs    : apmlog_tools/ATT 
+	             ArduCopter/BARO    6953 msgs    : apmlog_tools/BARO
+	             ArduCopter/IMU    34756 msgs    : sensor_msgs/Imu  
+	             ArduCopter/IMU2   34754 msgs    : sensor_msgs/Imu  
+	             ArduCopter/MAG     6953 msgs    : apmlog_tools/MAG 
+	             ArduCopter/MAG2    6953 msgs    : apmlog_tools/MAG
 ~~~
 
 
