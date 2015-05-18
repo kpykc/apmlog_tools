@@ -55,6 +55,9 @@ find_package(catkin REQUIRED COMPONENTS
    ATT.msg
    MAG.msg
    BARO.msg
+   POWR.msg
+   UBX1.msg
+   UBX2.msg
 #   Message2.msg
  )
 
