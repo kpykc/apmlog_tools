@@ -49,8 +49,8 @@ class videoFileHandler:
 			# TODO: temporary hack, time sync/source is needed
 			imageMsg.header.stamp =  rospy.Time.from_sec(time.time()) 
 			# TODO: try
-			# коли запустився скрипт, взяти поточний TS системи за перший TS video і перший TS IMU
-			# наступні TS IMU рахуємо так: next_ts = prev_ts + imu[current] - imu[prev];
+			# at script start, take a current TS (system time) as first TS of the video and first TS of IMU
+			# next TS IMU calculate as: next_ts = prev_ts + imu[current] - imu[prev];
 
 			# write message to bag file
 			bagfile.write(self.topic, imageMsg, imageMsg.header.stamp)
