@@ -53,6 +53,7 @@ find_package(catkin REQUIRED COMPONENTS
    FILES
    AHR.msg
    ATT.msg
+   MAG.msg
 #   Message2.msg
  )
 
