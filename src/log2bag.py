@@ -21,6 +21,9 @@ try:
 	from magHandler import MAGHandler
 	from baroHandler import BAROHandler
 	from powrHandler import POWRHandler
+	from gpsHandler import GPSHandler
+	from radHandler import RADHandler
+	from currHandler import CURRHandler
 	from videoHandler import videoFileHandler
 	# from handlers.imuHandler import IMUHandler
 	# from handlers.ahrHandler import AHRHandler
@@ -62,6 +65,28 @@ def main():
 	bag = rosbag.Bag('test.bag', 'w')
 
 	# load all handlers and call them
+
+	channelNames = logdata.channels.keys()
+
+	# import threading
+	# for channel in logdata.channels.keys():
+	# 	#print channel
+	# 	hnd = getattr(importlib.import_module("handlers."+channel+"Handler"), channel+"Handler")
+	# 	# handlers path e.g.: ${PKG}/src/handlers/ATTHandler.py
+	# 	t = threading.Thread(target=hnd, args = (q,u)) # set correct args
+	# 	t.daemon = True
+	#  	t.start()
+
+	#import importlib
+	#atth = importlib.import_module("attHandler")
+	#atth = (importlib.import_module("attHandler")).ATTHandler
+	#In [1]: import importlib
+	#In [2]: ah = importlib.import_module("handlers.attHandler")
+	#In [3]: atth = ah.ATTHandler()
+	#cn = logdata.channels.keys()
+	#ah = importlib.import_module("handlers."+cn[2]+"Handler")
+	#mymethod = getattr(importlib.import_module("abc.def.ghi.jkl.myfile"), "mymethod")
+	##hnd = getattr(importlib.import_module("handlers."+cn[2]+"Handler"), cn[2]+"Handler")
 
 	# IMU
 	print("IMU...")
@@ -110,6 +135,27 @@ def main():
 
 	powr_h.setName("POWR")
 	powr_h.convertData(logdata, bag)
+
+	# CURR
+	print("CURR...")
+	CURR_h = CURRHandler()
+
+	CURR_h.setName("CURR")
+	CURR_h.convertData(logdata, bag)
+
+	# GPS
+	print("GPS...")
+	GPS_h = GPSHandler()
+
+	GPS_h.setName("GPS")
+	GPS_h.convertData(logdata, bag)
+
+	# RAD
+	print("RAD...")
+	RAD_h = RADHandler()
+
+	RAD_h.setName("RAD")
+	RAD_h.convertData(logdata, bag)
 
 	# camera
 	if args.video != None:

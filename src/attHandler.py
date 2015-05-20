@@ -7,7 +7,7 @@ except ImportError:
 
 
 class ATTHandler:
-	'''registers test classes, loading using a basic plugin architecture, and can run them all in one run() operation'''
+	'''ATT handler'''
 	def __init__(self):
 		name = 'none'
 		
@@ -18,25 +18,24 @@ class ATTHandler:
 
 		self.topic = logdata.vehicleType+'/'+self.name
 
-		att = logdata.channels[self.name]
-		timestamp_ms = att["TimeMS"].listData
+		channel = logdata.channels[self.name]
+		timestamp_ms = channel["TimeMS"].listData
 		
 		# TODO: there are iterators, use them?
 		for msgid in range(0,len(timestamp_ms)):
 
-			attMsg = ATT()
+			msg = ATT()
 
-			attMsg.header.seq = timestamp_ms[msgid][0]
-			self.stamp = rospy.Time.from_sec(float(long(timestamp_ms[msgid][1])/1e6)) # TODO: check if conversion is correct
-			attMsg.header.stamp = self.stamp
+			msg.header.seq = timestamp_ms[msgid][0]
+			msg.header.stamp = rospy.Time.from_sec(float(long(timestamp_ms[msgid][1])/1e6)) # TODO: check if conversion is correct
 
-			attMsg.DesRoll = att["DesRoll"].listData[msgid][1]
-			attMsg.DesYaw = att["DesYaw"].listData[msgid][1]
-			attMsg.ErrRP = att["ErrRP"].listData[msgid][1]
-			attMsg.ErrYaw = att["ErrYaw"].listData[msgid][1]
-			attMsg.Pitch = att["Pitch"].listData[msgid][1]
-			attMsg.Roll = att["Roll"].listData[msgid][1]
-			attMsg.Yaw = att["Yaw"].listData[msgid][1]
+			msg.DesRoll = channel["DesRoll"].listData[msgid][1]
+			msg.DesYaw = channel["DesYaw"].listData[msgid][1]
+			msg.ErrRP = channel["ErrRP"].listData[msgid][1]
+			msg.ErrYaw = channel["ErrYaw"].listData[msgid][1]
+			msg.Pitch = channel["Pitch"].listData[msgid][1]
+			msg.Roll = channel["Roll"].listData[msgid][1]
+			msg.Yaw = channel["Yaw"].listData[msgid][1]
 
-			bagfile.write(self.topic, attMsg, self.stamp)
+			bagfile.write(self.topic, msg, msg.header.stamp)
 

@@ -20,27 +20,26 @@ class MAGHandler:
 
 		self.topic = logdata.vehicleType+'/'+self.name
 
-		mag = logdata.channels[self.name]
-		timestamp_ms = mag["TimeMS"].listData
+		channel = logdata.channels[self.name]
+		timestamp_ms = channel["TimeMS"].listData
 		
 		# TODO: there are iterators, use them?
 		for msgid in range(0,len(timestamp_ms)):
 
-			magMsg = MAG()
+			msg = MAG()
 
-			magMsg.header.seq = timestamp_ms[msgid][0]
-			self.stamp = rospy.Time.from_sec(float(long(timestamp_ms[msgid][1])/1e6)) # TODO: check if conversion is correct
-			magMsg.header.stamp = self.stamp
+			msg.header.seq = timestamp_ms[msgid][0]
+			msg.header.stamp = rospy.Time.from_sec(float(long(timestamp_ms[msgid][1])/1e6)) # TODO: check if conversion is correct
 
-			magMsg.MOfsX = mag["MOfsX"].listData[msgid][1]
-			magMsg.MOfsY = mag["MOfsY"].listData[msgid][1]
-			magMsg.MOfsZ = mag["MOfsZ"].listData[msgid][1]
-			magMsg.MagX = mag["MagX"].listData[msgid][1]
-			magMsg.MagY = mag["MagY"].listData[msgid][1]
-			magMsg.MagZ = mag["MagZ"].listData[msgid][1]
-			magMsg.MagX = mag["OfsX"].listData[msgid][1]
-			magMsg.MagY = mag["OfsY"].listData[msgid][1]
-			magMsg.MagZ = mag["OfsZ"].listData[msgid][1]
+			msg.MOfsX = channel["MOfsX"].listData[msgid][1]
+			msg.MOfsY = channel["MOfsY"].listData[msgid][1]
+			msg.MOfsZ = channel["MOfsZ"].listData[msgid][1]
+			msg.MagX = channel["MagX"].listData[msgid][1]
+			msg.MagY = channel["MagY"].listData[msgid][1]
+			msg.MagZ = channel["MagZ"].listData[msgid][1]
+			msg.MagX = channel["OfsX"].listData[msgid][1]
+			msg.MagY = channel["OfsY"].listData[msgid][1]
+			msg.MagZ = channel["OfsZ"].listData[msgid][1]
 
-			bagfile.write(self.topic, magMsg, self.stamp)
+			bagfile.write(self.topic, msg, msg.header.stamp)
 

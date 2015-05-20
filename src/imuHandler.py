@@ -1,6 +1,7 @@
 try:
 	import rospy
 	import rosbag
+	from sensor_msgs.msg import Imu
 except ImportError:
 	print "Can't load ROS dependencies"
 
@@ -8,41 +9,33 @@ except ImportError:
 class IMUHandler:
 	'''registers test classes, loading using a basic plugin architecture, and can run them all in one run() operation'''
 	def __init__(self):
-		try:
-			from sensor_msgs.msg import Imu
-		except ImportError:
-			self.Imu = None
-		else:
-			self.Imu = Imu
+		name = 'none'
 		
 	def setName(self, name):
 		self.name = name
 
 	def convertData(self, logdata, bagfile):
 
-		imu1 = logdata.channels[self.name]
-		imu1_timems = imu1["TimeMS"].listData
-		imu1_accx = imu1["AccX"].listData
-		imu1_accy = imu1["AccY"].listData
-		imu1_accz = imu1["AccZ"].listData
+		self.topic = logdata.vehicleType+'/'+self.name
 
-		imu1_gyrx = imu1["GyrX"].listData
-		imu1_gyry = imu1["GyrY"].listData
-		imu1_gyrz = imu1["GyrZ"].listData
+		channel = logdata.channels[self.name]
+		timestamp_ms = channel["TimeMS"].listData
 
 		topic = logdata.vehicleType+'/'+self.name
 
-		for msgid in range(0,len(imu1_timems)):
+		for msgid in range(0,len(timestamp_ms)):
 
-			imuMsg = self.Imu()
-			imuMsg.header.seq = imu1_timems[msgid][0]
-			imuMsg.header.stamp =  rospy.Time.from_sec(float(long(imu1_timems[msgid][1])/1e6)) # TODO: check if conversion is correct 
-			imuMsg.angular_velocity.x = imu1_gyrx[msgid][1]
-			imuMsg.angular_velocity.y = imu1_gyry[msgid][1]
-			imuMsg.angular_velocity.z = imu1_gyrz[msgid][1]
-			imuMsg.linear_acceleration.x = imu1_accx[msgid][1]
-			imuMsg.linear_acceleration.y = imu1_accy[msgid][1]
-			imuMsg.linear_acceleration.z = imu1_accz[msgid][1]
+			msg = Imu()
+
+			msg.header.seq = timestamp_ms[msgid][0]
+			msg.header.stamp =  rospy.Time.from_sec(float(long(timestamp_ms[msgid][1])/1e6)) # TODO: check if conversion is correct 
+
+			msg.angular_velocity.x = channel["GyrX"].listData[msgid][1]
+			msg.angular_velocity.y = channel["GyrY"].listData[msgid][1]
+			msg.angular_velocity.z = channel["GyrZ"].listData[msgid][1]
+			msg.linear_acceleration.x = channel["AccX"].listData[msgid][1]
+			msg.linear_acceleration.y = channel["AccY"].listData[msgid][1]
+			msg.linear_acceleration.z = channel["AccZ"].listData[msgid][1]
 			# TODO: This is not enough for ROS IMU msg, add cov matrices and calculate orientation
 
 			# simple complementary filter for orientation
@@ -85,10 +78,10 @@ class IMUHandler:
 			#  *it = 0;
 
 			#imu_transform.setRotation(orientation);
-			imuMsg.angular_velocity_covariance = [0, 0, 0, 0, 0, 0, 0, 0, 1]
-			imuMsg.orientation_covariance = [0.001, 0, 0, 0, 0.001, 0, 0, 0, 0.1]
+			msg.angular_velocity_covariance = [0, 0, 0, 0, 0, 0, 0, 0, 1]
+			msg.orientation_covariance = [0.001, 0, 0, 0, 0.001, 0, 0, 0, 0.1]
 			#self.orientation += imu.angular_velocity.z * (imu.header.stamp - self.prev_time).to_sec()
 			#self.prev_time = imu.header.stamp
 			#(imu.orientation.x, imu.orientation.y, imu.orientation.z, imu.orientation.w) = Rotation.RotZ(self.orientation).GetQuaternion()
-			bagfile.write(topic, imuMsg, imuMsg.header.stamp)
+			bagfile.write(topic, msg, msg.header.stamp)
 

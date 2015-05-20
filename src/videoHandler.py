@@ -33,8 +33,9 @@ class videoFileHandler:
 
 	def convertData(self, bagfile):
 		seq = 0
+		ret = True
 		bridge = CvBridge()
-		while(True):
+		while(ret): # are you sure?? was True
 			# Capture frame-by-frame
 			ret, cvImage = self.capture.read()
 			try:
