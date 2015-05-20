@@ -58,28 +58,40 @@ optional arguments:
 	ATT...
 	MAG...
 	BARO...
+	POWR...
+	CURR...
+	GPS...
+	RAD...
 	Convesion finished.
-	0/apmlog_tools> rosbag info test.bag 
+	0/src> rosbag info test.bag 
 	path:        test.bag
 	version:     2.0
-	duration:    0.7s
+	duration:    6:27s (387s)
 	start:       Jan 01 1970 01:00:00.07 (0.07)
-	end:         Jan 01 1970 01:00:00.82 (0.82)
-	size:        34.6 MB
-	messages:    173785
-	compression: none [44/44 chunks]
+	end:         Jan 01 1970 01:06:27.68 (387.68)
+	size:        35.2 MB
+	messages:    180136
+	compression: none [45/45 chunks]
 	types:       apmlog_tools/AHR  [9d012171d83de74acfa0a894540f0986]
 	             apmlog_tools/ATT  [f4f099f3e1046a4bcb57cb9d663574ae]
 	             apmlog_tools/BARO [297cf70f0c733e3d5f4861d33d57bc18]
+	             apmlog_tools/CURR [44a9fcd586b2ac9da1c02b9fb035dced]
+	             apmlog_tools/GPS  [c9e6f5d789bd12e12f9e207f2162f8fb]
 	             apmlog_tools/MAG  [103fdaa79527522ab1187d8e39f937bd]
+	             apmlog_tools/POWR [5263f14fb2dbb65f2b01248a7305d537]
+	             apmlog_tools/RAD  [e5ef9ca46853629e0794b8064dbeb8da]
 	             sensor_msgs/Imu   [6a62c6daae103f4ff57a132d6f95cec2]
 	topics:      ArduCopter/AHR2   41707 msgs    : apmlog_tools/AHR 
 	             ArduCopter/ATT    41709 msgs    : apmlog_tools/ATT 
 	             ArduCopter/BARO    6953 msgs    : apmlog_tools/BARO
+	             ArduCopter/CURR     695 msgs    : apmlog_tools/CURR
+	             ArduCopter/GPS     3573 msgs    : apmlog_tools/GPS 
 	             ArduCopter/IMU    34756 msgs    : sensor_msgs/Imu  
 	             ArduCopter/IMU2   34754 msgs    : sensor_msgs/Imu  
 	             ArduCopter/MAG     6953 msgs    : apmlog_tools/MAG 
-	             ArduCopter/MAG2    6953 msgs    : apmlog_tools/MAG
+	             ArduCopter/MAG2    6953 msgs    : apmlog_tools/MAG 
+	             ArduCopter/POWR     695 msgs    : apmlog_tools/POWR
+	             ArduCopter/RAD     1388 msgs    : apmlog_tools/RAD
 ~~~
 
 
