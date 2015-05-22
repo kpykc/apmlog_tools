@@ -11,9 +11,14 @@ except ImportError:
 
 class videoFileHandler:
 	'''Handle video file data'''
-	def __init__(self):
+	def __init__(self, bagfile):
 		name = 'none'
 		self.showFrames = False
+		self.bag = bagfile
+
+	def __del__(self):
+		self.capture.release()
+		cv2.destroyAllWindows()
 
 	def setVerbose(self, showFrames):
 		self.showFrames = showFrames
@@ -21,6 +26,11 @@ class videoFileHandler:
 	def setName(self, name):
 		self.name = name
 		self.topic = self.name+'/image_raw'
+
+	def setInitialStamp(self, initial_stamp=0.0, fps=30.0 ):
+		self.stamp = initial_stamp
+		self.initial_stamp = initial_stamp
+		self.fps = fps
 
 	def setSource(self, srcname):
 		self.srcname = srcname
@@ -31,36 +41,44 @@ class videoFileHandler:
 		else:
 			print("ERROR: Unable to open given video file!")
 
-	def convertData(self, bagfile):
-		seq = 0
-		ret = True
-		bridge = CvBridge()
-		while(ret): # are you sure?? was True
-			# Capture frame-by-frame
-			ret, cvImage = self.capture.read()
-			try:
-				imageMsg = bridge.cv2_to_imgmsg(cvImage, "bgr8") # TODO: format spec as cmd option?
-			except CvBridgeError, e:
-				print e
+		self.bridge = CvBridge()
 
-			# creating ros message
-			seq = seq + 1
+		self.seq = 0
 
-			imageMsg.header.seq = seq
-			# TODO: temporary hack, time sync/source is needed
-			imageMsg.header.stamp =  rospy.Time.from_sec(time.time()) 
-			# TODO: try
-			# at script start, take a current TS (system time) as first TS of the video and first TS of IMU
-			# next TS IMU calculate as: next_ts = prev_ts + imu[current] - imu[prev];
+	def getTimestamp(self):
+		return self.stamp
 
-			# write message to bag file
-			bagfile.write(self.topic, imageMsg, imageMsg.header.stamp)
+	def convertData(self):
+		
+		# Capture frame-by-frame
+		ret, cvImage = self.capture.read()
+		try:
+			msg = self.bridge.cv2_to_imgmsg(cvImage, "bgr8") # TODO: format spec as cmd option?
+		except CvBridgeError, e:
+			print e
 
-			# this is not so important for conversion
-			if self.showFrames == True:
-				cv2.imshow('frame', cvImage)
-				if cv2.waitKey(1) & 0xFF == ord('q'):
-					break
+		# creating ros message
+		self.seq = self.seq + 1
+
+		msg.header.seq = self.seq
+		# TODO: temporary hack, time sync/source is needed
+		self.stamp = self.initial_stamp + self.seq*(1.0/self.fps)
+
+		msg.header.stamp = rospy.Time.from_sec(self.stamp)
+		# rospy.Time.from_sec(time.time()) 
+		# TODO: try
+		# at script start, take a current TS (system time) as first TS of the video and first TS of IMU
+		# next TS IMU calculate as: next_ts = prev_ts + imu[current] - imu[prev];
+
+		#print "publish image", msg.header.stamp
+		# write message to bag file
+		self.bag.write(self.topic, msg, msg.header.stamp)
+
+		# this is not so important for conversion
+		# if self.showFrames == True:
+		# 	cv2.imshow('frame', cvImage)
+		# 	if cv2.waitKey(1) & 0xFF == ord('q'):
+		# 		break
 
 		# Our operations on the frame come here
 		# gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -69,6 +87,6 @@ class videoFileHandler:
 		# if cv2.waitKey(1) & 0xFF == ord('q'):
 		# 	break
 		# When everything done, release the capture
-		self.capture.release()
-		cv2.destroyAllWindows()
+		
+
 

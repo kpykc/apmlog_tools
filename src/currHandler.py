@@ -18,7 +18,7 @@ class CURRHandler(GenericHandler):
 			msg = CURR()
 
 			msg.header.seq = self.timestamp_ms[self.msgid][0]
-			msg.header.stamp = self.stamp
+			msg.header.stamp = rospy.Time.from_sec(self.stamp)
 
 			msg.Curr = self.channel["Curr"].listData[self.msgid][1]
 			msg.CurrTot = self.channel["CurrTot"].listData[self.msgid][1]

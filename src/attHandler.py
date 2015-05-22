@@ -15,7 +15,7 @@ class ATTHandler(GenericHandler):
 			msg = ATT()
 
 			msg.header.seq = self.timestamp_ms[self.msgid][0]
-			msg.header.stamp = self.stamp
+			msg.header.stamp = rospy.Time.from_sec(self.stamp)
 
 			msg.DesRoll = self.channel["DesRoll"].listData[self.msgid][1]
 			msg.DesYaw = self.channel["DesYaw"].listData[self.msgid][1]

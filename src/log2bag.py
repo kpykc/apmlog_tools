@@ -3,6 +3,7 @@
 import os, sys
 import argparse
 import time
+import math
 
 # from https://github.com/diydrones/ardupilot/tree/master/Tools/LogAnalyzer
 import DataflashLog
@@ -35,8 +36,10 @@ def main():
 
 	parser = argparse.ArgumentParser(description='Convert APM Dataflash log to ROSBag format')
 	parser.add_argument('logfile', type=argparse.FileType('r'), help='path to Dataflash log file (or - for stdin)')
-	parser.add_argument('-v','--video', type=argparse.FileType('r'), help='path to video file (or - for stdin)')
-	parser.add_argument('-t', '--time_sync', metavar='', action='store_const', const=True, help='sync video to logfile') # TODO: add sync time code
+	parser.add_argument('-v','--video', type=argparse.FileType('r'), help='path to video file')
+	parser.add_argument('-t', '--time_sync', default='0', type=float)
+	parser.add_argument('--fps', default='30', type=float)
+	# parser.add_argument('-t', '--time_sync', metavar='', action='store_const', const=True, help='sync video to logfile') # TODO: add sync time code
 	parser.add_argument('-f', '--format',  metavar='', type=str, action='store', choices=['bin','log','auto'], default='auto', help='log file format: \'bin\',\'log\' or \'auto\'')
 	parser.add_argument('-s', '--skip_bad', metavar='', action='store_const', const=True, help='skip over corrupt dataflash lines')
 	parser.add_argument('-p', '--profile', metavar='', action='store_const', const=True, help='output performance profiling data')
@@ -44,7 +47,8 @@ def main():
 	args = parser.parse_args()
 
 	# test DataflashLog reading 1
-	print("Loading log file...")
+	print "Loading log file: ", args.logfile.name
+	print "Delay of first video frame is set to: ", args.time_sync, " seconds."
 	startTime = time.time()
 	logdata = DataflashLog.DataflashLog()
 	logdata.read(args.logfile.name, format=args.format, ignoreBadlines=args.skip_bad)
@@ -93,9 +97,22 @@ def main():
 			if (msgType == 'GPS'):
 				handlers.append( GPSHandler(msgType, logdata, bag) )
 
+	# camera
+	if args.video != None:
+		print("Converting video...")
+		cam = videoFileHandler(bag)
+		cam.setName('camera')
+		cam.setSource(args.video.name)
+		cam.setVerbose(False)
+		#cam.setInitialStamp(args.time_sync, args.fps)
+		#handlers.append(cam)
+		#print("Converting...")
+		#cam.convertData(bag)
+
 	earliest_timestamp = True
+	# next_timestamp = 0.0
 	while(True):
-		ts = [] # current set of timestamps from spawned handlers
+		timestamps = [] # current set of timestamps from spawned handlers
 		if not handlers:
   			print "No handles exist anymore"
   			break
@@ -107,13 +124,22 @@ def main():
 
 		# collect timestamps from currently active handlers
 		for h in handlers: 
-			ts.append( h.getTimestamp() )
+			timestamps.append( h.getTimestamp() )
 
 		if handlers: # request handler with earliest message to save it
 			# print len(handlers), len(ts)
+			next_stamp = min(timestamps)
+			handlers[timestamps.index(next_stamp)].convertData()
+			#print help(min(timestamps))
+
 			if earliest_timestamp is True:
-				earliest_timestamp = min(ts) # save earliest timestamp for video syncronisation with log data
-			handlers[ts.index(min(ts))].convertData()
+				earliest_timestamp = False # save earliest timestamp for video syncronisation with log data
+				cam.setInitialStamp( args.time_sync+next_stamp , args.fps)
+				handlers.append(cam)
+
+			# if fabs( next_timestamp - cam.getTimestamp() ) <= (1.0/30.0)/2.0:
+			# 	print "Publish image"
+			# 	cam.convertData()
 			# if not ts:
 			# 	handlers[ts.index(min(ts))].convertData()
 			# else:
@@ -130,15 +156,6 @@ def main():
 	# 	t.daemon = True
 	#  	t.start()
 
-	# camera
-	if args.video != None:
-		print("Converting video...")
-		cam = videoFileHandler()
-		cam.setName('camera')
-		cam.setSource(args.video.name)
-		cam.setVerbose(False)
-		print("Converting...")
-		cam.convertData(bag)
 
 	# handlers finished
 	bag.close()

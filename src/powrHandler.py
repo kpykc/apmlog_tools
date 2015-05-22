@@ -17,7 +17,7 @@ class POWRHandler(GenericHandler):
 			msg = POWR()
 
 			msg.header.seq = self.timestamp_ms[self.msgid][0]
-			msg.header.stamp = self.stamp
+			msg.header.stamp = rospy.Time.from_sec(self.stamp)
 
 			msg.VServo = self.channel["VServo"].listData[self.msgid][1]
 			msg.Vcc = self.channel["Vcc"].listData[self.msgid][1]

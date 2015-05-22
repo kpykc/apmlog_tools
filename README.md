@@ -111,10 +111,40 @@ Converting video to ROSBag file:
 	compression: none [350/350 chunks]
 	types:       sensor_msgs/Image [060021388200f6f0f447d0fcd9c64743]
 	topics:      camera/image_raw   350 msgs    : sensor_msgs/Image
-~~~~
+~~~
 
 ~~~
-rosrun apmlog_tools log2bag.py sample/2.bin -v ~/Downloads/pixhack/video_and_telemetry/DCIM/100HDDVR/REC_0001.MOV
+	rosrun apmlog_tools log2bag.py -t=0.2 --fps=30 ../sample/2.bin -v ~/Downloads/pixhack/video_and_telemetry/DCIM/100HDDVR/REC_0001.MOV
+	
+	0/src> rosbag info test.bag 
+	path:        test.bag
+	version:     2.0
+	duration:    0.4s
+	start:       Jan 01 1970 01:00:00.07 (0.07)
+	end:         Jan 01 1970 01:00:00.46 (0.46)
+	size:        54.3 MB
+	messages:    94620
+	compression: none [29/29 chunks]
+	types:       apmlog_tools/AHR  [9d012171d83de74acfa0a894540f0986]
+	             apmlog_tools/ATT  [f4f099f3e1046a4bcb57cb9d663574ae]
+	             apmlog_tools/BARO [297cf70f0c733e3d5f4861d33d57bc18]
+	             apmlog_tools/CURR [44a9fcd586b2ac9da1c02b9fb035dced]
+	             apmlog_tools/MAG  [103fdaa79527522ab1187d8e39f937bd]
+	             apmlog_tools/POWR [5263f14fb2dbb65f2b01248a7305d537]
+	             apmlog_tools/RAD  [e5ef9ca46853629e0794b8064dbeb8da]
+	             sensor_msgs/Image [060021388200f6f0f447d0fcd9c64743]
+	             sensor_msgs/Imu   [6a62c6daae103f4ff57a132d6f95cec2]
+	topics:      ArduCopter/AHR2    22350 msgs    : apmlog_tools/AHR 
+	             ArduCopter/ATT     22351 msgs    : apmlog_tools/ATT 
+	             ArduCopter/BARO     3726 msgs    : apmlog_tools/BARO
+	             ArduCopter/CURR      372 msgs    : apmlog_tools/CURR
+	             ArduCopter/IMU     18625 msgs    : sensor_msgs/Imu  
+	             ArduCopter/IMU2    18624 msgs    : sensor_msgs/Imu  
+	             ArduCopter/MAG      3725 msgs    : apmlog_tools/MAG 
+	             ArduCopter/MAG2     3725 msgs    : apmlog_tools/MAG 
+	             ArduCopter/POWR      372 msgs    : apmlog_tools/POWR
+	             ArduCopter/RAD       744 msgs    : apmlog_tools/RAD 
+	             camera/image_raw       6 msgs    : sensor_msgs/Image
 ~~~
 
 # misc
@@ -124,6 +154,19 @@ rosrun apmlog_tools log2bag.py sample/2.bin -v ~/Downloads/pixhack/video_and_tel
 
 	git archive -o apmlog_tools-latest.zip HEAD
 
+
+Add support for mavlink into wireshark:
+
+	git  clone https://github.com/mavlink/mavlink.git
+
+	cd mavlink/
+
+	mkdir -p ~/.wireshark/plugins
+	python -m pymavlink.tools.mavgen --lang=WLua message_definitions/v1.0/pixhawk.xml -o ~/.wireshark/plugins/pixhawk_mavlink.lua
+
+	#python -m pymavlink.tools.mavgen --lang=WLua message_definitions/v1.0/ardupilotmega.xml -o ~/.wireshark/plugins/ardupilotmega_mavlink.lua
+
+only one dialect can be used, wireshark say: can't use same protocol name mavlink
 
 Just note:
 

@@ -17,7 +17,7 @@ class GPSHandler(GenericHandler):
 			msg = GPS()
 
 			msg.header.seq = self.timestamp_ms[self.msgid][0]
-			msg.header.stamp = self.stamp
+			msg.header.stamp = rospy.Time.from_sec(self.stamp)
 
 			msg.Alt = self.getMsgValue("Alt")
 			msg.GCrs = self.channel["GCrs"].listData[self.msgid][1]

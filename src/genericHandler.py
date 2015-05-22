@@ -22,7 +22,8 @@ class GenericHandler:
 
 	def getTimestamp(self):
 		if self.msgid < self.msgs_len:
-			self.stamp = rospy.Time.from_sec(float(long(self.timestamp_ms[self.msgid][1])/1e6)) # TODO: check if conversion is correct 
+			#self.stamp = rospy.Time.from_sec(float(long(self.timestamp_ms[self.msgid][1])/1e6)) # TODO: check if conversion is correct 
+			self.stamp = float(long(self.timestamp_ms[self.msgid][1])/1e6)
 			return self.stamp
 		else:
 			return None

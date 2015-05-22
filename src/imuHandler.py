@@ -16,7 +16,7 @@ class IMUHandler(GenericHandler):
 			msg = Imu()
 
 			msg.header.seq = self.timestamp_ms[self.msgid][0]
-			msg.header.stamp = self.stamp 
+			msg.header.stamp = rospy.Time.from_sec(self.stamp)
 
 			msg.angular_velocity.x = self.getMsgValue("GyrX")
 			msg.angular_velocity.y = self.getMsgValue("GyrY")

@@ -15,7 +15,7 @@ class AHRHandler(GenericHandler):
 
 			msg = AHR()
 			msg.header.seq = self.timestamp_ms[self.msgid][0]
-			msg.header.stamp = self.stamp
+			msg.header.stamp = rospy.Time.from_sec(self.stamp)
 
 			msg.Alt = self.channel["Alt"].listData[self.msgid][1]
 			msg.Lat = self.channel["Lat"].listData[self.msgid][1]

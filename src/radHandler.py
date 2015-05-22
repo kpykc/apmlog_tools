@@ -18,7 +18,7 @@ class RADHandler(GenericHandler):
 			msg = RAD()
 
 			msg.header.seq = self.timestamp_ms[self.msgid][0]
-			msg.header.stamp = self.stamp
+			msg.header.stamp = rospy.Time.from_sec(self.stamp)
 
 			msg.Fixed = self.channel["Fixed"].listData[self.msgid][1]
 			msg.Noise = self.channel["Noise"].listData[self.msgid][1]
