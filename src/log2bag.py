@@ -99,9 +99,9 @@ def main():
 
 	# camera
 	if args.video != None:
-		print("Converting video...")
+		print("WARNING! Adding uncompressed video frames to bag. Be carefull the file can grow rapidly over few Gb.")
 		cam = videoFileHandler(bag)
-		cam.setName('camera')
+		cam.setName(logdata.vehicleType+'/camera')
 		cam.setSource(args.video.name)
 		cam.setVerbose(False)
 		#cam.setInitialStamp(args.time_sync, args.fps)
