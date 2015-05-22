@@ -160,3 +160,59 @@ Just note:
 	#                 test.run(self.logdata, verbose)  # RUN THE TEST
 	#                 endTime = time.time()
 	#                 test.execTime = 1000 * (endTime-startTime)
+
+
+~~~{.bash}
+source /opt/ros/indigo/setup.bash 
+source devel/setup.bash 
+
+roscore
+
+rosrun mavros mavros_node _fcu_url:="udp://:5000@"
+
+roslaunch mavros apm.launch fcu_url:="udp://:5000@"
+roslaunch mavros px4.launch fcu_url:="udp://:5000@"
+
+./mavlinklog_publisher.py
+~~~
+
+~~~
+https://github.com/mavlink/mavlink/blob/master/pymavlink/tools/mavplayback.py
+
+https://github.com/mavlink/mavlink/blob/master/pymavlink/tools/mavtomfile.py
+https://github.com/mavlink/mavlink/blob/master/pymavlink/tools/mavlogdump.py
+https://github.com/mavlink/mavlink/blob/master/pymavlink/tools/python_array_test_send.py
+https://github.com/mavlink/mavlink/blob/master/pymavlink/tools/python_array_test_recv.py
+https://github.com/mavlink/mavlink/blob/5afc5d6fa361c69d97da01af8c4e73dbc9f79197/pymavlink/tools/magfit_motors.py
+https://github.com/mavlink/mavlink/blob/master/pymavlink/mavutil.py
+
+
+https://groups.google.com/forum/#!topic/mavlink/wRDe8EGWxa8
+http://forum.erlerobotics.com/t/access-to-ros-environment/120
+https://github.com/mavlink/mavlink/blob/master/pymavlink/tools/MPU6KSearch.py
+~~~
+
+~~~
+#!/usr/bin/env python
+
+import sys, time, os, struct, json
+from pymavlink import mavutil
+
+src = mavutil.mavlink_connection('2.bin', dialect="pixhawk", planner_format=False, robust_parsing=True, notimestamps=True)
+sink = mavutil.mavlink_connection('udp::5000', dialect="pixhawk", input=False, notimestamps=False)
+
+
+while(True):
+	msg = src.recv_msg()
+	#msg = src.recv_match(type=['RAW_IMU','SCALED_IMU2','IMU','IMU2','PARM','PARAM_VALUE','GPS'])
+	if msg is None:
+		print("End of log?")
+		break	
+	timestamp = getattr(msg, '_timestamp')
+	now = time.strftime("%H:%M:%S", time.localtime(timestamp))
+	print now, msg.get_type()
+	sink.write(msg.get_msgbuf())
+~~~	
+
+
+
