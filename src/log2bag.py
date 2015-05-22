@@ -15,6 +15,7 @@ except ImportError:
 	print "Can't load ROS dependencies"
 
 try:
+	from genericHandler import GenericHandler
 	from imuHandler import IMUHandler
 	from ahrHandler import AHRHandler
 	from attHandler import ATTHandler
@@ -92,6 +93,7 @@ def main():
 			if (msgType == 'GPS'):
 				handlers.append( GPSHandler(msgType, logdata, bag) )
 
+	earliest_timestamp = True
 	while(True):
 		ts = [] # current set of timestamps from spawned handlers
 		if not handlers:
@@ -109,6 +111,8 @@ def main():
 
 		if handlers: # request handler with earliest message to save it
 			# print len(handlers), len(ts)
+			if earliest_timestamp is True:
+				earliest_timestamp = min(ts) # save earliest timestamp for video syncronisation with log data
 			handlers[ts.index(min(ts))].convertData()
 			# if not ts:
 			# 	handlers[ts.index(min(ts))].convertData()
