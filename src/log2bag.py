@@ -68,6 +68,55 @@ def main():
 
 	channelNames = logdata.channels.keys()
 	types=['IMU','IMU2','AHR2','ATT','MAG','MAG2','BARO','POWR','CURR','RAD','GPS']
+
+	handlers = []
+	for msgType in types:
+		if msgType in types:
+			#print msgType
+			if (msgType == 'IMU') or (msgType == 'IMU2'):
+				handlers.append( IMUHandler(msgType, logdata, bag) )
+			if (msgType == 'MAG') or (msgType == 'MAG2'):
+				handlers.append( MAGHandler(msgType, logdata, bag) )
+			if (msgType == 'AHR2'):
+				handlers.append( AHRHandler(msgType, logdata, bag) )
+			if (msgType == 'ATT'):
+				handlers.append( ATTHandler(msgType, logdata, bag) )
+			if (msgType == 'BARO'):
+				handlers.append( BAROHandler(msgType, logdata, bag) )
+			if (msgType == 'POWR'):
+				handlers.append( POWRHandler(msgType, logdata, bag) )
+			if (msgType == 'CURR'):
+				handlers.append( CURRHandler(msgType, logdata, bag) )
+			if (msgType == 'RAD'):
+				handlers.append( RADHandler(msgType, logdata, bag) )
+			if (msgType == 'GPS'):
+				handlers.append( GPSHandler(msgType, logdata, bag) )
+
+	while(True):
+		ts = [] # current set of timestamps from spawned handlers
+		if not handlers:
+  			print "No handles exist anymore"
+  			break
+
+  		# remove inactive handlers
+		for h in handlers: 
+			if h.getTimestamp() is None:
+				handlers.remove(h)
+
+		# collect timestamps from currently active handlers
+		for h in handlers: 
+			ts.append( h.getTimestamp() )
+
+		if handlers: # request handler with earliest message to save it
+			# print len(handlers), len(ts)
+			handlers[ts.index(min(ts))].convertData()
+			# if not ts:
+			# 	handlers[ts.index(min(ts))].convertData()
+			# else:
+			# 	print "No timestamps?"
+			# 	break
+
+
 	# import threading
 	# for channel in logdata.channels.keys():
 	# 	#print channel
@@ -76,86 +125,6 @@ def main():
 	# 	t = threading.Thread(target=hnd, args = (q,u)) # set correct args
 	# 	t.daemon = True
 	#  	t.start()
-
-	#import importlib
-	#atth = importlib.import_module("attHandler")
-	#atth = (importlib.import_module("attHandler")).ATTHandler
-	#In [1]: import importlib
-	#In [2]: ah = importlib.import_module("handlers.attHandler")
-	#In [3]: atth = ah.ATTHandler()
-	#cn = logdata.channels.keys()
-	#ah = importlib.import_module("handlers."+cn[2]+"Handler")
-	#mymethod = getattr(importlib.import_module("abc.def.ghi.jkl.myfile"), "mymethod")
-	##hnd = getattr(importlib.import_module("handlers."+cn[2]+"Handler"), cn[2]+"Handler")
-
-	# IMU
-	print("IMU...")
-	imu_h = IMUHandler()
-
-	imu_h.setName("IMU")
-	imu_h.convertData(logdata, bag)
-
-	imu_h.setName("IMU2")
-	imu_h.convertData(logdata, bag)
-
-	# AHR
-	print("AHR...")
-	ahr_h = AHRHandler()
-
-	ahr_h.setName("AHR2")
-	ahr_h.convertData(logdata, bag)
-
-	# ATT
-	print("ATT...")
-	att_h = ATTHandler()
-
-	att_h.setName("ATT")
-	att_h.convertData(logdata, bag)
-
-	# MAG
-	print("MAG...")
-	mag_h = MAGHandler()
-
-	mag_h.setName("MAG")
-	mag_h.convertData(logdata, bag)
-
-	mag_h.setName("MAG2")
-	mag_h.convertData(logdata, bag)
-
-	# BARO
-	print("BARO...")
-	baro_h = BAROHandler()
-
-	baro_h.setName("BARO")
-	baro_h.convertData(logdata, bag)
-
-	# POWR
-	print("POWR...")
-	powr_h = POWRHandler()
-
-	powr_h.setName("POWR")
-	powr_h.convertData(logdata, bag)
-
-	# CURR
-	print("CURR...")
-	CURR_h = CURRHandler()
-
-	CURR_h.setName("CURR")
-	CURR_h.convertData(logdata, bag)
-
-	# GPS
-	print("GPS...")
-	GPS_h = GPSHandler()
-
-	GPS_h.setName("GPS")
-	GPS_h.convertData(logdata, bag)
-
-	# RAD
-	print("RAD...")
-	RAD_h = RADHandler()
-
-	RAD_h.setName("RAD")
-	RAD_h.convertData(logdata, bag)
 
 	# camera
 	if args.video != None:

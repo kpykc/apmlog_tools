@@ -9,30 +9,39 @@ except ImportError:
 
 class POWRHandler:
 	'''POWR channel handler'''
-	def __init__(self):
-		name = 'none'
-		
-	def setName(self, name):
+	def __init__(self, name, logdata, bagfile):
 		self.name = name
+		self.logdata = logdata
+		self.bag = bagfile
 
-	def convertData(self, logdata, bagfile):
-
+		self.msgid = 0
 		self.topic = logdata.vehicleType+'/'+self.name
 
-		powr = logdata.channels[self.name]
-		timestamp_ms = powr["TimeMS"].listData
-		
-		# TODO: there are iterators, use them?
-		for msgid in range(0,len(timestamp_ms)):
+		self.channel = logdata.channels[self.name]
+		self.timestamp_ms = self.channel["TimeMS"].listData
 
-			powrMsg = POWR()
+		self.stamp = rospy.Time.from_sec(float(long(self.timestamp_ms[self.msgid][1])/1e6)) # TODO: check if conversion is correct 
+		self.msgs_len = len(self.timestamp_ms)
 
-			powrMsg.header.seq = timestamp_ms[msgid][0]
-			self.stamp = rospy.Time.from_sec(float(long(timestamp_ms[msgid][1])/1e6)) # TODO: check if conversion is correct
-			powrMsg.header.stamp = self.stamp
+	def getTimestamp(self):
+		if self.msgid < self.msgs_len:
+			self.stamp = rospy.Time.from_sec(float(long(self.timestamp_ms[self.msgid][1])/1e6)) # TODO: check if conversion is correct 
+			return self.stamp
+		else:
+			return None
 
-			powrMsg.VServo = powr["VServo"].listData[msgid][1]
-			powrMsg.Vcc = powr["Vcc"].listData[msgid][1]
+	def convertData(self):
 
-			bagfile.write(self.topic, powrMsg, self.stamp)
+		if self.msgid < self.msgs_len:
+
+			msg = POWR()
+
+			msg.header.seq = self.timestamp_ms[self.msgid][0]
+			msg.header.stamp = self.stamp
+
+			msg.VServo = self.channel["VServo"].listData[self.msgid][1]
+			msg.Vcc = self.channel["Vcc"].listData[self.msgid][1]
+
+			self.bag.write(self.topic, msg, msg.header.stamp)
+			self.msgid = self.msgid + 1
 

@@ -9,33 +9,43 @@ except ImportError:
 
 class CURRHandler:
 	'''CURR channel handler'''
-	def __init__(self):
-		name = 'none'
-		
-	def setName(self, name):
+	def __init__(self, name, logdata, bagfile):
 		self.name = name
+		self.logdata = logdata
+		self.bag = bagfile
 
-	def convertData(self, logdata, bagfile):
-
+		self.msgid = 0
 		self.topic = logdata.vehicleType+'/'+self.name
 
-		channel = logdata.channels[self.name]
-		timestamp_ms = channel["TimeMS"].listData
-		
-		# TODO: there are iterators, use them?
-		for msgid in range(0,len(timestamp_ms)):
+		self.channel = logdata.channels[self.name]
+		self.timestamp_ms = self.channel["TimeMS"].listData
+
+		self.stamp = rospy.Time.from_sec(float(long(self.timestamp_ms[self.msgid][1])/1e6)) # TODO: check if conversion is correct 
+		self.msgs_len = len(self.timestamp_ms)
+
+	def getTimestamp(self):
+		if self.msgid < self.msgs_len:
+			self.stamp = rospy.Time.from_sec(float(long(self.timestamp_ms[self.msgid][1])/1e6)) # TODO: check if conversion is correct 
+			return self.stamp
+		else:
+			return None
+
+	def convertData(self):
+
+		if self.msgid < self.msgs_len:
 
 			msg = CURR()
 
-			msg.header.seq = timestamp_ms[msgid][0]
-			msg.header.stamp = rospy.Time.from_sec(float(long(timestamp_ms[msgid][1])/1e6)) # TODO: check if conversion is correct
+			msg.header.seq = self.timestamp_ms[self.msgid][0]
+			msg.header.stamp = self.stamp
 
-			msg.Curr = channel["Curr"].listData[msgid][1]
-			msg.CurrTot = channel["CurrTot"].listData[msgid][1]
-			msg.ThrInt = channel["ThrInt"].listData[msgid][1]
-			msg.ThrOut = channel["ThrOut"].listData[msgid][1]
-			msg.Vcc = channel["Vcc"].listData[msgid][1]
-			msg.Volt = channel["Volt"].listData[msgid][1]
+			msg.Curr = self.channel["Curr"].listData[self.msgid][1]
+			msg.CurrTot = self.channel["CurrTot"].listData[self.msgid][1]
+			msg.ThrInt = self.channel["ThrInt"].listData[self.msgid][1]
+			msg.ThrOut = self.channel["ThrOut"].listData[self.msgid][1]
+			msg.Vcc = self.channel["Vcc"].listData[self.msgid][1]
+			msg.Volt = self.channel["Volt"].listData[self.msgid][1]
 
-			bagfile.write(self.topic, msg, msg.header.stamp)
+			self.bag.write(self.topic, msg, msg.header.stamp)
+			self.msgid = self.msgid + 1
 

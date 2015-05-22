@@ -10,32 +10,41 @@ except ImportError:
 
 class BAROHandler:
 	'''BARO channel handler'''
-	def __init__(self):
-		name = 'none'
-		
-	def setName(self, name):
+	def __init__(self, name, logdata, bagfile):
 		self.name = name
+		self.logdata = logdata
+		self.bag = bagfile
 
-	def convertData(self, logdata, bagfile):
-
+		self.msgid = 0
 		self.topic = logdata.vehicleType+'/'+self.name
 
-		channel = logdata.channels[self.name]
-		timestamp_ms = channel["TimeMS"].listData
-		
-		# TODO: there are iterators, use them?
-		for msgid in range(0,len(timestamp_ms)):
+		self.channel = logdata.channels[self.name]
+		self.timestamp_ms = self.channel["TimeMS"].listData
+
+		self.stamp = rospy.Time.from_sec(float(long(self.timestamp_ms[self.msgid][1])/1e6)) # TODO: check if conversion is correct 
+		self.msgs_len = len(self.timestamp_ms)
+
+	def getTimestamp(self):
+		if self.msgid < self.msgs_len:
+			self.stamp = rospy.Time.from_sec(float(long(self.timestamp_ms[self.msgid][1])/1e6)) # TODO: check if conversion is correct 
+			return self.stamp
+		else:
+			return None
+
+	def convertData(self):
+
+		if self.msgid < self.msgs_len:
 
 			msg = BARO()
 
-			msg.header.seq = timestamp_ms[msgid][0]
-			self.stamp = rospy.Time.from_sec(float(long(timestamp_ms[msgid][1])/1e6)) # TODO: check if conversion is correct
+			msg.header.seq = self.timestamp_ms[self.msgid][0]
 			msg.header.stamp = self.stamp
 
-			msg.Alt = channel["Alt"].listData[msgid][1]
-			msg.CRt = channel["CRt"].listData[msgid][1]
-			msg.Press = channel["Press"].listData[msgid][1]
-			msg.Temp = channel["Temp"].listData[msgid][1]
+			msg.Alt = self.channel["Alt"].listData[self.msgid][1]
+			msg.CRt = self.channel["CRt"].listData[self.msgid][1]
+			msg.Press = self.channel["Press"].listData[self.msgid][1]
+			msg.Temp = self.channel["Temp"].listData[self.msgid][1]
 
-			bagfile.write(self.topic, msg, self.stamp)
+			self.bag.write(self.topic, msg, msg.header.stamp)
+			self.msgid = self.msgid + 1
 
