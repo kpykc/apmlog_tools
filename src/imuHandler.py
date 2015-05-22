@@ -18,32 +18,34 @@ class IMUHandler(GenericHandler):
 			msg.header.seq = self.timestamp_ms[self.msgid][0]
 			msg.header.stamp = self.stamp 
 
-			msg.angular_velocity.x = self.channel["GyrX"].listData[self.msgid][1]
-			msg.angular_velocity.y = self.channel["GyrY"].listData[self.msgid][1]
-			msg.angular_velocity.z = self.channel["GyrZ"].listData[self.msgid][1]
-			msg.linear_acceleration.x = self.channel["AccX"].listData[self.msgid][1]
-			msg.linear_acceleration.y = self.channel["AccY"].listData[self.msgid][1]
-			msg.linear_acceleration.z = self.channel["AccZ"].listData[self.msgid][1]
+			msg.angular_velocity.x = self.getMsgValue("GyrX")
+			msg.angular_velocity.y = self.getMsgValue("GyrY")
+			msg.angular_velocity.z = self.getMsgValue("GyrZ")
+			msg.linear_acceleration.x = self.getMsgValue("AccX")
+			msg.linear_acceleration.y = self.getMsgValue("AccY")
+			msg.linear_acceleration.z = self.getMsgValue("AccZ")
 			# TODO: This is not enough for ROS IMU msg, add cov matrices and calculate orientation
 
 			# simple complementary filter for orientation
-			#pitch += ((float)omega_x / GYROSCOPE_SENSITIVITY) * dt; // Angle around the X-axis
-    		#roll -= ((float)omega_y / GYROSCOPE_SENSITIVITY) * dt; // Angle around the Y-axis
-			#// Turning around the X axis results in a vector on the Y-axis
-			#pitchAcc = atan2(a_x, ( sqrt(pow(a_y,2.0) + pow(a_z,2.0)) )) * 180.0 / M_PI;
-			#pitch = pitch * 0.98 + pitchAcc * 0.02;
+			GYROSCOPE_SENSITIVITY = 1
+			# dt = self.last_stamp - self.stamp
+			#pitch += (msg.angular_velocity.x / GYROSCOPE_SENSITIVITY) * dt # Angle around the X-axis
+    		#roll -= (msg.angular_velocity.y / GYROSCOPE_SENSITIVITY) * dt # Angle around the Y-axis
 
-			#// Turning around the Y axis results in a vector on the X-axis
-			#rollAcc = atan2(a_y, (sqrt(pow(a_x,2.0) + pow(a_z,2.0)) )) * 180.0 / M_PI;
-			#roll = roll * 0.98 + rollAcc * 0.02;
+			# Turning around the X axis results in a vector on the Y-axis
+			#pitchAcc = atan2(msg.linear_acceleration.x, ( sqrt(pow(msg.linear_acceleration.y,2.0) + pow(msg.linear_acceleration.z,2.0)) )) * 180.0 / M_PI
+			#pitch = pitch * 0.98 + pitchAcc * 0.02
 
-			#yaw =  ((float)omega_z / GYROSCOPE_SENSITIVITY) * dt;
+			# Turning around the Y axis results in a vector on the X-axis
+			#rollAcc = atan2(msg.linear_acceleration.y, (sqrt(pow(msg.linear_acceleration.x,2.0) + pow(msg.linear_acceleration.z,2.0)) )) * 180.0 / M_PI
+			#roll = roll * 0.98 + rollAcc * 0.02
 
-			#orientation.setRPY(roll, pitch, yaw);
-			#tf::quaternionTFToMsg(orientation, orientation_msg);
+			#yaw =  (msg.angular_velocity.z / GYROSCOPE_SENSITIVITY) * dt
 
-			#//build imu_msg
-			#imu_msg->header.frame_id = frame_id_imu_link;
+			#orientation.setRPY(roll, pitch, yaw)
+			#tf::quaternionTFToMsg(orientation, orientation_msg)
+
+			#msg.header.frame_id = frame_id_imu_link;
 			#imu_transform.setRotation(orientation);
 			msg.angular_velocity_covariance = [0, 0, 0, 0, 0, 0, 0, 0, 1]
 			msg.orientation_covariance = [0.001, 0, 0, 0, 0.001, 0, 0, 0, 0.1]
