@@ -67,7 +67,7 @@ def main():
 	# load all handlers and call them
 
 	channelNames = logdata.channels.keys()
-
+	types=['IMU','IMU2','AHR2','ATT','MAG','MAG2','BARO','POWR','CURR','RAD','GPS']
 	# import threading
 	# for channel in logdata.channels.keys():
 	# 	#print channel
