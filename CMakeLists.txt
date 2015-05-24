@@ -51,21 +51,16 @@ find_package(catkin REQUIRED COMPONENTS
 # Generate messages in the 'msg' folder
  add_message_files(
    FILES
-    AHR.msg #
-    ATT.msg #
-    BARO.msg #
-    CTUN.msg
-    CURR.msg #
-    GPS.msg #
-    MAG.msg #
-    NTUN.msg
-    PM.msg
-    POWR.msg #
-    RAD.msg #
+    AHR.msg ##
+    ATT.msg ##
+    BARO.msg ##
+    CURR.msg ##
+    GPS.msg ##
+    MAG.msg ##
+    POWR.msg ##
+    RAD.msg #№
     RCIN.msg
     RCOU.msg
-    UBX1.msg
-    UBX2.msg
  )
 
 ## Generate services in the 'srv' folder

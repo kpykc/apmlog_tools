@@ -1,12 +1,12 @@
 # MAG
 
 Header header
-float32 MOfsX
-float32 MOfsY
-float32 MOfsZ
-float32 MagX
-float32 MagY
-float32 MagZ
-float32 OfsX
-float32 OfsY
-float32 OfsZ
+int16 MOfsX
+int16 MOfsY
+int16 MOfsZ
+int16 MagX
+int16 MagY
+int16 MagZ
+int16 OfsX
+int16 OfsY
+int16 OfsZ

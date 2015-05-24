@@ -1,5 +1,5 @@
 # CURR
-
+# TODO: msg types
 Header header
 float32 Curr
 float32 CurrTot

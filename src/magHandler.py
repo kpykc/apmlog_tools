@@ -20,7 +20,10 @@ class MAGHandler(GenericHandler):
 
 			msg.header.seq = self.timestamp_ms[self.msgid][0]
 			msg.header.stamp = rospy.Time.from_sec(self.stamp)
-
+			# TODO:
+			# SCALED_IMU.msg:int16
+			# HIGHRES_IMU.msg:float32
+			# RAW_IMU.msg:int16 
 			msg.MOfsX = self.channel["MOfsX"].listData[self.msgid][1]
 			msg.MOfsY = self.channel["MOfsY"].listData[self.msgid][1]
 			msg.MOfsZ = self.channel["MOfsZ"].listData[self.msgid][1]

@@ -1,10 +1,10 @@
 # RAD
 
 Header header
-float32 Fixed
-float32 Noise
-float32 RSSI
-float32 RemNoise
-float32 RemRSSI
-float32 RxErrors
-float32 TxBuf
+uint16 Fixed
+uint8 Noise
+uint8 RSSI
+uint8 RemNoise
+uint8 RemRSSI
+uint16 RxErrors
+uint8 TxBuf
