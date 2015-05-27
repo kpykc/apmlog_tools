@@ -1,14 +1,6 @@
 # APM log tools
 
-
-# Fetching class for dealing with logs 
-
-If you want say update class from `ardupilot` source:
-
-	wget https://raw.githubusercontent.com/diydrones/ardupilot/master/Tools/LogAnalyzer/DataflashLog.py
-
-
-# Notes on installation
+## Installation
 
 **Deps**: `python`, `opencv` python wrappers, `numpy`, `rospy`, `cvbridge`, `rosbag`, etc.
 
@@ -27,7 +19,7 @@ If you want say update class from `ardupilot` source:
 	<run_depend>message_runtime</run_depend>
 ~~~
 
-# Running in ROS environment
+## Running in ROS environment
 
 **Important**: do not forget to `source /opt/ros/setup.bash` (path depends on your install), and `source devel/setup.bash` in your catkin workspace. 
 
@@ -147,59 +139,11 @@ Converting video to ROSBag file:
 	             camera/image_raw       6 msgs    : sensor_msgs/Image
 ~~~
 
-# misc
-
-**TODO**:  Note that types in the streams `*.msg` are chosen by voluntaristic decision. They may be wrong.
 
 
-	git archive -o apmlog_tools-latest.zip HEAD
+## Fetching class for dealing with logs 
 
+If you want say update class from `ardupilot` source:
 
-Add support for mavlink into wireshark:
+	wget https://raw.githubusercontent.com/diydrones/ardupilot/master/Tools/LogAnalyzer/DataflashLog.py
 
-	git  clone https://github.com/mavlink/mavlink.git
-
-	cd mavlink/
-
-	mkdir -p ~/.wireshark/plugins
-	python -m pymavlink.tools.mavgen --lang=WLua message_definitions/v1.0/pixhawk.xml -o ~/.wireshark/plugins/pixhawk_mavlink.lua
-
-	#python -m pymavlink.tools.mavgen --lang=WLua message_definitions/v1.0/ardupilotmega.xml -o ~/.wireshark/plugins/ardupilotmega_mavlink.lua
-
-only one dialect can be used, wireshark say: can't use same protocol name mavlink
-
-Just note:
-
-	# class TestSuite(object):
-	#     '''registers test classes, loading using a basic plugin architecture, and can run them all in one run() operation'''
-	#     def __init__(self):
-	#         self.tests   = []
-	#         self.logfile = None
-	#         self.logdata = None  
-	#         # dynamically load in Test subclasses from the 'tests' folder
-	#         # to prevent one being loaded, move it out of that folder, or set that test's .enable attribute to False
-	#         dirName = os.path.dirname(os.path.abspath(__file__))
-	#         testScripts = glob.glob(dirName + '/tests/*.py')
-	#         testClasses = []
-	#         for script in testScripts:
-	#             m = imp.load_source("m",script)
-	#             for name, obj in inspect.getmembers(m, inspect.isclass):
-	#                 if name not in testClasses and inspect.getsourcefile(obj) == script:
-	#                     testClasses.append(name)
-	#                     self.tests.append(obj())
-
-	#         # and here's an example of explicitly loading a Test class if you wanted to do that
-	#         # m = imp.load_source("m", dirName + '/tests/TestBadParams.py')
-	#         # self.tests.append(m.TestBadParams())
-
-	#     def run(self, logdata, verbose):
-	#         '''run all registered tests in a single call, gathering execution timing info'''
-	#         self.logdata = logdata
-	#         self.logfile = logdata.filename
-	#         for test in self.tests:
-	#             # run each test in turn, gathering timing info
-	#             if test.enable:
-	#                 startTime = time.time()
-	#                 test.run(self.logdata, verbose)  # RUN THE TEST
-	#                 endTime = time.time()
-	#                 test.execTime = 1000 * (endTime-startTime)
