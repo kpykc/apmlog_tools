@@ -16,19 +16,17 @@ except ImportError:
 	print "Can't load ROS dependencies"
 
 try:
-	from genericHandler import GenericHandler
-	from imuHandler import IMUHandler
-	from ahrHandler import AHRHandler
-	from attHandler import ATTHandler
-	from magHandler import MAGHandler
-	from baroHandler import BAROHandler
-	from powrHandler import POWRHandler
-	from gpsHandler import GPSHandler
-	from radHandler import RADHandler
-	from currHandler import CURRHandler
-	from videoHandler import videoFileHandler
-	# from handlers.imuHandler import IMUHandler
-	# from handlers.ahrHandler import AHRHandler
+	from handlers.genericHandler import GenericHandler
+	from handlers.imuHandler import IMUHandler
+	from handlers.ahrHandler import AHRHandler
+	from handlers.attHandler import ATTHandler
+	from handlers.magHandler import MAGHandler
+	from handlers.baroHandler import BAROHandler
+	from handlers.powrHandler import POWRHandler
+	from handlers.gpsHandler import GPSHandler
+	from handlers.radHandler import RADHandler
+	from handlers.currHandler import CURRHandler
+	from handlers.videoHandler import videoFileHandler
 except ImportError:
 	print "Can't load handlers"
 
@@ -47,8 +45,7 @@ def main():
 	args = parser.parse_args()
 
 	# test DataflashLog reading 1
-	print "Loading log file: ", args.logfile.name
-	print "Delay of first video frame is set to: ", args.time_sync, " seconds."
+	print "Loading log file: ", args.logfile.name	
 	startTime = time.time()
 	logdata = DataflashLog.DataflashLog()
 	logdata.read(args.logfile.name, format=args.format, ignoreBadlines=args.skip_bad)
@@ -64,6 +61,9 @@ def main():
 		if emptyErr:
 			sys.stderr.write("Empty log file: %s, %s" % (logdata.filename, emptyErr))
 			sys.exit(1)
+
+	if args.video:
+		print "Delay of first video frame is set to: ", args.time_sync, " seconds."
 
 	# starting conversion
 	print("Converting...")
@@ -134,8 +134,9 @@ def main():
 
 			if earliest_timestamp is True:
 				earliest_timestamp = False # save earliest timestamp for video syncronisation with log data
-				cam.setInitialStamp( args.time_sync+next_stamp , args.fps)
-				handlers.append(cam)
+				if args.video:
+					cam.setInitialStamp( args.time_sync+next_stamp , args.fps)
+					handlers.append(cam)
 
 			# if fabs( next_timestamp - cam.getTimestamp() ) <= (1.0/30.0)/2.0:
 			# 	print "Publish image"
