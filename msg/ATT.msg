@@ -1,10 +1,22 @@
 # ATT
-# TODO: check types
+# https://github.com/diydrones/ardupilot/blob/master/libraries/DataFlash/DataFlash.h#L426
 Header header
-float32 DesRoll
-float32 DesYaw
-float32 ErrRP
-float32 ErrYaw
-float32 Pitch
-float32 Roll
-float32 Yaw
+
+int16 DesRoll  # int16_t  control_roll;
+int16 Roll     # int16_t  roll;
+			   # int16_t  control_pitch; TODO:
+int16 Pitch    # int16_t  pitch;
+uint16 DesYaw  # uint16_t control_yaw;
+uint16 Yaw     # uint16_t yaw;
+uint16 ErrRP   # uint16_t error_rp;
+uint16 ErrYaw  # uint16_t error_yaw;
+
+
+    
+    
+    
+    
+    
+    
+    
+    
